@@ -1,3 +1,6 @@
+ENV["CMDSTAN_HOME"] = "~/Documents/Julia/ExternalPackages/cmdstan/"
+ENV["JULIA_CMDSTAN_HOME"] = "/Users/jrcasey/Documents/Julia/ExternalPackages/cmdstan/"
+
 using DifferentialEquations, StanSample, PyPlot, DataFrames, Statistics
 
 # specify indices
@@ -17,8 +20,8 @@ theta = [0.075, 0.3,        0.02, 0.02,   0.03,   0.8]
 # irr:        light amplitude
 
 
-# specify model 
-function dxdt!(du,u,p,t)   
+# specify model
+function dxdt!(du,u,p,t)
     light = 1.0 + 0.5*(p[6]*sin(π*((t-81.25)/182.5))-p[6])
     growth = p[1]*u[i_n]/(p[2]+u[i_n]) * light * u[i_p]
     grazing = p[3]*u[i_p]*u[i_z]
@@ -72,7 +75,7 @@ functions {
               real[] theta, // parameters
               real[] x_r,   // fixed real data (empty)
               int[] x_i) {  // fixed integer data (empty)
-   
+
     /*
     guide to theta:
     theta[1]:  vmax         maximum growth rate in Michaelis Menten formulation
@@ -87,12 +90,12 @@ functions {
     real p = fmax(0.0, x[2]);
     real z = fmax(0.0, x[3]);
 
-    real light = 1.0 + 0.5*(theta[6]*sin(pi()*((t-81.25)/182.5))-theta[6]); 
+    real light = 1.0 + 0.5*(theta[6]*sin(pi()*((t-81.25)/182.5))-theta[6]);
     real growth = theta[1]*n/(theta[2]+n) * light * p;
     real grazing = theta[3]*p*z;
     real ploss = theta[4]*p;
     real zloss = theta[5]*z*z;
-    
+
     return {-growth+ploss+zloss,growth-grazing-ploss,grazing-zloss};
   }
 }
@@ -160,7 +163,7 @@ fig,ax = plt.subplots(figsize=(12,10))
 
 for i in 1:3
     ax.plot(t,x[:,i], color=colors[i], label=cname[i])
-    ax.errorbar(x=tobs, y=dat_summary[:,i,3], yerr=[dat_summary[:,i,3]-dat_summary[:,i,2],dat_summary[:,i,4]-dat_summary[:,i,3]], 
+    ax.errorbar(x=tobs, y=dat_summary[:,i,3], yerr=[dat_summary[:,i,3]-dat_summary[:,i,2],dat_summary[:,i,4]-dat_summary[:,i,3]],
         ls=":", color=colors[i], marker="+", capsize=1.0)
 end
 for i in 1:2
