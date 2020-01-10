@@ -1,9 +1,12 @@
+ENV["CMDSTAN_HOME"] = "~/Documents/Julia/ExternalPackages/cmdstan/"
+ENV["JULIA_CMDSTAN_HOME"] = "/Users/jrcasey/Documents/Julia/ExternalPackages/cmdstan/"
+
 using StanSample, CSV, DataFrames, PyPlot, Statistics
 
 versioninfo()
 
-data = CSV.read("data/macromolecules.csv");
-NH4 = CSV.read("data/flynn_macromolecules.csv");
+data = CSV.read("Documents/Julia/GitHub/bayesian_cbiomes/case_studies/macromolecular/data/macromolecules.csv");
+NH4 = CSV.read("Documents/Julia/GitHub/bayesian_cbiomes/case_studies/macromolecular/data/flynn_macromolecules.csv");
 
 dat = join(data,NH4,on=:t);
 dat = hcat(dat[:,1:4],dat[:,7]);
@@ -33,12 +36,12 @@ const macromolecularmodel = "functions {
                real[] x_r,
                int[]  x_i) {       // parameters
 
-    real CNpro = theta[1]; 
-    real KN    = theta[2];    
-    real mu    = theta[3]; 
-    real CHsyn = theta[4]; 
-    real m_ex  = theta[5];  
-    real R_ex  = theta[6];  
+    real CNpro = theta[1];
+    real KN    = theta[2];
+    real mu    = theta[3];
+    real CHsyn = theta[4];
+    real m_ex  = theta[5];
+    real R_ex  = theta[6];
     real tau   = theta[7];
     real b     = theta[8];
 
@@ -47,11 +50,11 @@ const macromolecularmodel = "functions {
     real Chl     = x[3]*x[2];
     real Rcell   = x[1]/x[2];
     real excr    = (1/2)*theta[5]*(1+tanh(Rcell - theta[6]));
-    
+
     real dCH    = x[2]*(theta[4] - excr);
     real dr     = (1/theta[7])*(r0-x[3]);
     real dPR    = x[2]*PRsynth;
-    real dN     = -dPR/(1+exp(-10000*x[4])); 
+    real dN     = -dPR/(1+exp(-10000*x[4]));
 
     return {dCH,dPR,dr,dN};
   }
@@ -76,16 +79,16 @@ model {
   x0[1]    ~ normal(0.1,1);
   x0[2]    ~ normal(0.1,1);
   x0[3]    ~ normal(10,10);
-  x0[4]    ~ normal(0.1,1);  
+  x0[4]    ~ normal(0.1,1);
   theta[1] ~ normal(6.6,10); //prior on CHpro
   theta[2] ~ normal(0.002,3); //prior on KN
   theta[3] ~ normal(0.3,1);
   theta[4] ~ normal(5,10);
   theta[5] ~ normal(10,10);
   theta[6] ~ normal(13,10);
-  theta[7] ~ normal(10,10); 
-  theta[8] ~ normal(0.05,5); 
-  
+  theta[7] ~ normal(10,10);
+  theta[8] ~ normal(0.05,5);
+
   for(i in 1:4){
     y[1:n,i] ~ normal(x[1:n,i], sigma[i]);
   }
@@ -189,5 +192,3 @@ end
 
 fig.subplots_adjust(bottom=0.1, top=0.96, left=0.1, right=0.95,
                     wspace=0.2, hspace=0.4)
-
-

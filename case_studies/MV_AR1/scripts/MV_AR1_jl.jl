@@ -1,6 +1,9 @@
+ENV["CMDSTAN_HOME"] = "~/Documents/Julia/ExternalPackages/cmdstan/"
+ENV["JULIA_CMDSTAN_HOME"] = "/Users/jrcasey/Documents/Julia/ExternalPackages/cmdstan/"
+
 using StanSample, Statistics, PyPlot, Random, Distributions, LinearAlgebra
 
-p = 3;
+p = 3; # Number of variables
 SIGMA = diagm(rand(Uniform(),p))
 
 eig = rand(Uniform(),p)
@@ -119,5 +122,3 @@ sm3 = SampleModel("MV_AR3", mod_code_D_struc)
 chns3 = read_samples(sm3)
 
 ESS3 = ess(chns3)
-
-

@@ -1,3 +1,6 @@
+ENV["CMDSTAN_HOME"] = "~/Documents/Julia/ExternalPackages/cmdstan/"
+ENV["JULIA_CMDSTAN_HOME"] = "/Users/jrcasey/Documents/Julia/ExternalPackages/cmdstan/"
+
 using StanSample, Statistics, PyPlot, CSV, DataFrames, LinearAlgebra
 
 DAT = CSV.read("data/bacterial_OTU.csv");
@@ -15,7 +18,7 @@ phy = zeros(4,size(PHY,2)-1)
 for i in 1:4
     phy[i,:] = PHY[findall(x->x==PHY_sum[i,1],PHY)[1][1],2:end]
 end
-    
+
 
 fig,ax = plt.subplots(figsize=(12,6))
 ax.plot(transpose(phy))
@@ -47,5 +50,3 @@ sm = SampleModel("MV_AR_OTU", mod_code)
 chns = read_samples(sm)
 
 ESS = ess(chns)
-
-

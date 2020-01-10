@@ -1,4 +1,8 @@
-using StanSample, CSV, DataFrames, PyPlot, Statistics, Distributions, Random
+ENV["CMDSTAN_HOME"] = "~/Documents/Julia/ExternalPackages/cmdstan/"
+ENV["JULIA_CMDSTAN_HOME"] = "/Users/jrcasey/Documents/Julia/ExternalPackages/cmdstan/"
+
+
+using StanSample, CSV, DataFrames, PyPlot, Statistics, Distributions, Random, StatsPlots
 
 versioninfo()
 
@@ -30,7 +34,7 @@ model{
     // Priors
     beta0 ~ normal(0,100);
     beta1 ~ normal(0,100);
-    
+
     // Likelihood
     y ~ normal(beta0 + beta1*x, sigma);
 }";
@@ -94,7 +98,7 @@ model{
     // Priors
     beta0 ~ normal(0,100);
     beta1 ~ normal(2.5,0.1);
-    
+
     // Likelihood
     y ~ normal(beta0 + beta1*x, sigma);
 }";
@@ -127,5 +131,3 @@ axs[3].axvline(sigma,color="m")
 axs[2].set_xlim((0.4,3))
 fig.subplots_adjust(bottom=0.1, top=0.96, left=0.1, right=0.95,
                     wspace=0.4, hspace=0.1)
-
-

@@ -1,3 +1,6 @@
+ENV["CMDSTAN_HOME"] = "~/Documents/Julia/ExternalPackages/cmdstan/"
+ENV["JULIA_CMDSTAN_HOME"] = "/Users/jrcasey/Documents/Julia/ExternalPackages/cmdstan/"
+
 using StanSample, CSV, DataFrames, PyPlot, Statistics
 
 versioninfo()
@@ -116,8 +119,8 @@ stan_code_model_nofit = """model {
     graz       ~ normal(0.15, 0.04);
     mort_p     ~ normal(0.02, 0.01);
     mort_z     ~ normal(0.02, 0.005);
-    bgconc_n1  ~ normal(0.01, 0.001); // (regular) 
-    bgconc_n2  ~ normal(0.66, 0.08);  // (winter) 
+    bgconc_n1  ~ normal(0.01, 0.001); // (regular)
+    bgconc_n2  ~ normal(0.66, 0.08);  // (winter)
     bgconc_p1  ~ normal(0.11, 0.01);  // (regular)
     bgconc_p2  ~ normal(0.05, 0.005); // (winter)
     bgconc_z1  ~ normal(0.09, 0.01);  // (regular)
@@ -204,10 +207,10 @@ model = SampleModel("NPZ", stan_code)
 nyears = 2
 index = findall(x->x≤nyears*365,data[:,1])
 
-stan_data = Dict("nobs" => size(index,1), 
-                 "tobs" => data[index,1], 
-                 "nobsvar" => 3, 
-                 "iobsvar" => [1,2,3], 
+stan_data = Dict("nobs" => size(index,1),
+                 "tobs" => data[index,1],
+                 "nobsvar" => 3,
+                 "iobsvar" => [1,2,3],
                  "obs" => [data[index,2] data[index,3] data[index,4]],
                  "nyears" => nyears)
 
@@ -224,7 +227,7 @@ index_prior = sample(1:size(rawdata,1),100,replace=false);
 prior = rawdata[index_prior,41:325]
 prior = convert(Matrix, prior)
 
-# reshape the priors 
+# reshape the priors
 priors = reshape(prior,100,3,95)
 
 t = data[index,1];
@@ -264,8 +267,8 @@ stan_code_model = """model {
     graz       ~ normal(0.15, 0.04);
     mort_p     ~ normal(0.02, 0.01);
     mort_z     ~ normal(0.02, 0.005);
-    bgconc_n1  ~ normal(0.01, 0.001); // (regular) 
-    bgconc_n2  ~ normal(0.66, 0.08);  // (winter) 
+    bgconc_n1  ~ normal(0.01, 0.001); // (regular)
+    bgconc_n2  ~ normal(0.66, 0.08);  // (winter)
     bgconc_p1  ~ normal(0.11, 0.01);  // (regular)
     bgconc_p2  ~ normal(0.05, 0.005); // (winter)
     bgconc_z1  ~ normal(0.09, 0.01);  // (regular)
@@ -328,5 +331,3 @@ ax.fill_between(t, sum(dat_summary[:,:,4],dims=2)[:,1], sum(dat_summary[:,:,5],d
 ax.plot(t, sum(dat_summary[:,:,1],dims=2)[:,1], label="model", color="C1")
 ax.set(xlabel="time", ylabel="sum", xticks=collect(1:365:nyears*365.0))
 ax.grid(true)
-
-
